@@ -1,4 +1,12 @@
 `include "lib/defines.vh"
+// 从内存中取指令
+// 使用PC中的地址，从存储器中读取数据，然后将数据放入IF/ID流水线寄存器中。
+// PC地址+4然后写回PC以便为下个时钟周期做好准备，
+// 增加后的地址同时也存入了IF/ID流水线寄存器以备后面的指令使用。
+
+// 新指令一般对其没有影响（除了在添加异常的时候，需要检查指令地址是否出错）
+// P64之前注意跳转指令即可
+
 module IF(
     input wire clk,
     input wire rst,
@@ -21,13 +29,13 @@ module IF(
     wire [31:0] next_pc;
     wire br_e;
     wire [31:0] br_addr;
-
+// 转移信息
     assign {
         br_e,
         br_addr
     } = br_bus;
 
-
+// 时序逻辑
     always @ (posedge clk) begin
         if (rst) begin
             pc_reg <= 32'hbfbf_fffc;
